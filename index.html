@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifra de César - Simulador Interativo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .theory {
+            background-color: #eef2f7;
+            padding: 20px;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+            margin-bottom: 25px;
+        }
+
+        .theory h2 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .interactive-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        textarea, input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .shift-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .shift-container div {
+            flex: 1;
+        }
+
+        .output-box {
+            background-color: #f8f9fa;
+            border: 2px dashed #bdc3c7;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 60px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cifra de César</h1>
+
+    <!-- Contextualização Teórica -->
+    <div class="theory">
+        <h2>O que é a Cifra de César?</h2>
+        <p>
+            A Cifra de César é uma das técnicas de criptografia mais simples e conhecidas. 
+            É um tipo de <strong>cifra de substituição</strong> na qual cada letra do texto original 
+            é substituída por outra letra que se encontra um determinado número fixo de posições 
+            mais à frente no alfabeto (deslocamento/chave). 
+        </p>
+    </div>
+
+    <!-- Componente Interativo -->
+    <div class="interactive-section">
+        <div class="form-group">
+            <label for="inputText">Texto de Entrada:</label>
+            <textarea id="inputText" placeholder="Digite sua mensagem aqui..."></textarea>
+        </div>
+
+        <div class="shift-container">
+            <div class="form-group">
+                <label for="action">Ação:</label>
+                <select id="action">
+                    <option value="encode">Criptografar</option>
+                    <option value="decode">Descriptografar</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="shift">Chave de Deslocamento:</label>
+                <input type="number" id="shift" value="3" min="1" max="25">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Resultado em Tempo Real:</label>
+            <div id="outputText" class="output-box"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Lógica em JavaScript para simulação em tempo real
+    const inputText = document.getElementById('inputText');
+    const shiftInput = document.getElementById('shift');
+    const actionInput = document.getElementById('action');
+    const outputText = document.getElementById('outputText');
+
+    function caesarCipher(str, shift, action) {
+        if (action === 'decode') {
+            shift = (26 - (shift % 26)) % 26;
+        }
+
+        return str.split('').map(char => {
+            const code = char.charCodeAt(0);
+
+            // Letras Maiúsculas (A-Z)
+            if (code >= 65 && code <= 90) {
+                return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+            }
+            // Letras Minúsculas (a-z)
+            else if (code >= 97 && code <= 122) {
+                return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+            }
+            // Outros caracteres permanecem inalterados
+            return char;
+        }).join('');
+    }
+
+    function processText() {
+        const text = inputText.value;
+        const shift = parseInt(shiftInput.value) || 0;
+        const action = actionInput.value;
+        
+        outputText.innerText = caesarCipher(text, shift, action);
+    }
+
+    // Listeners de eventos para tempo real
+    inputText.addEventListener('input', processText);
+    shiftInput.addEventListener('input', processText);
+    actionInput.addEventListener('change', processText);
+</script>
+
+</body>
+</html>
